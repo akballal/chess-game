@@ -101,6 +101,19 @@ io.on('connection', (socket) => {
     }
 });
 
+ // Player resigns
+ socket.on('resign', ({ gameId, resignedPlayer }) => {
+  console.log(`Player ${socket.id} resigned from game ${gameId}`);
+  const room = gameRooms[gameId];
+  if (room) {
+    const winner = resignedPlayer === 'w' ? 'Black' : 'White';
+    console.log(`Game over: ${winner} wins by resignation.`);
+    io.in(gameId).emit('gameOver', { winner });
+  } else {
+    console.error('Game room not found:', gameId);
+    socket.emit('error', { message: 'Game room does not exist' });
+  }
+});
 
   // Handle player disconnect
   socket.on('disconnect', () => {

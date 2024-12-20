@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Chess } from 'chess.js';
 import './Chessboard.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
 const PIECES = {
@@ -26,6 +26,7 @@ const ChessBoardOnline = () => {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const gameId = urlParams.get('gameId');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const newSocket = io('http://localhost:3001');
@@ -48,7 +49,7 @@ const ChessBoardOnline = () => {
     });
 
     newSocket.on('gameOver', ({ winner }) => {
-      setWinner(winner === 'w' ? 'Black' : 'White');
+      setWinner(winner === 'Black' ? 'Black' : 'White');
     });
 
     newSocket.on('updateBoard', (board) => {
@@ -61,38 +62,47 @@ const ChessBoardOnline = () => {
     };
   }, [chess, gameId]);
 
+  const handleCloseGame = () =>
+  {
+    navigate('/')
+  }
+
+  const handleResign = () => {
+    const resignedPlayer = playerColor;
+    console.log(resignedPlayer);
+    socket.emit('resign', { gameId, resignedPlayer });
+  };
+
   const handleSquareClick = (rowIndex, colIndex) => {
     const adjustedRowIndex = playerColor === 'b' ? 7 - rowIndex : rowIndex;
     const adjustedColIndex = playerColor === 'b' ? 7 - colIndex : colIndex;
     const square = `${COL_COORDS[adjustedColIndex]}${ROW_COORDS[adjustedRowIndex]}`.toLowerCase();
     const piece = board[adjustedRowIndex][adjustedColIndex];
+
+    // Check if it's the current player's turn
+  if (chess.turn() !== playerColor) {
+    alert(`It's ${chess.turn() === 'w' ? 'White' : 'Black'}'s turn! Please wait for your turn.`);
+    return;
+  }
   
     if (selectedSquare === square) {
+      // Deselect the currently selected piece
       setSelectedSquare(null);
       setValidMoves([]);
+    } else if (piece && piece.color === playerColor) {
+      // Select a new piece of the same color
+      setSelectedSquare(square);
+      const moves = chess.moves({ square, verbose: true }).map((m) => m.to);
+      setValidMoves(moves);
     } else if (selectedSquare) {
-      // Get the piece being moved
-      const movingPiece = board.find((row) =>
-        row.some((p) => p && p.color === playerColor && p.square === selectedSquare)
-      )?.find((p) => p && p.square === selectedSquare);
-  
+      // Attempt to move the currently selected piece
       const isPromotion =
-        movingPiece && movingPiece.type === 'p' && (square[1] === '8' || square[1] === '1');
-  
-      console.log('Square =', square, 'piece =', piece, 'movingPiece =', movingPiece);
-      console.log('is Promotion =>', isPromotion);
+        board[adjustedRowIndex][adjustedColIndex]?.type === 'p' &&
+        (square[1] === '8' || square[1] === '1');
   
       const promotion = isPromotion
         ? prompt('Promote to (q/r/b/n):', 'q').toLowerCase() || 'q'
         : undefined;
-  
-      console.log('promotion =>', promotion);
-  
-      if (promotion && !['q', 'r', 'b', 'n'].includes(promotion)) {
-        alert('Invalid promotion piece! Defaulting to queen.');
-      }
-  
-      console.log('from = {} , to = {} , promotion = {}', selectedSquare, square, promotion);
   
       const move = chess.move({ from: selectedSquare, to: square, promotion });
       if (move) {
@@ -106,24 +116,14 @@ const ChessBoardOnline = () => {
           to: move.to,
           promotion: move.promotion || undefined,
         });
-  
-        // if (chess.isCheckmate()) {
-        //   setWinner(chess.turn() === 'w' ? 'Black' : 'White');
-        // }
-        
       } else {
         alert('Invalid move');
-        setSelectedSquare(null);
-        setValidMoves([]);
       }
-    } else if (piece && piece.color === playerColor) {
-      const moves = chess.moves({ square, verbose: true }).map((m) => m.to);
-      setSelectedSquare(square);
-      setValidMoves(moves);
     } else {
       alert(`You can only move ${playerColor === 'w' ? 'White' : 'Black'} pieces!`);
     }
   };
+  
   
 
   const isValidMoveSquare = (row, col) => {
@@ -157,6 +157,7 @@ const ChessBoardOnline = () => {
           <h2>Waiting for opponent to join...</h2>
         </div>
       ) : (
+        <>
         <div className="chess-board">
           {getTransformedBoard().map((row, rowIndex) => (
             <div key={rowIndex} className="chess-row">
@@ -183,12 +184,18 @@ const ChessBoardOnline = () => {
             </div>
           ))}
         </div>
+        <div>
+        <button onClick={handleResign}>Resign</button>
+      </div></>
       )}
+      
+      
+
       {winner && (
         <div className="popup">
           <div className="popup-content">
             <h2>{winner} Wins!</h2>
-            <button onClick={() => window.location.reload()}>Restart Game</button>
+            <button onClick={handleCloseGame}>Close Game</button>
           </div>
         </div>
       )}

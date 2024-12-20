@@ -1,0 +1,158 @@
+/* Ensure the container fills the screen */
+.chess-board-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;   /* Full screen height */
+  width: 100vw;    /* Full screen width */
+  margin: 0;       /* Remove any default margins */
+  padding: 0;      /* Remove padding */
+  background-color: #643e3e;
+  overflow: hidden; /* Prevent scrollbars */
+}
+
+/* Make the board size responsive */
+.chess-board {
+  display: flex;
+  flex-direction: column;
+  width: 90vmin;    /* Scale the width to 90% of the viewport's smallest dimension */
+  height: 90vmin;   /* Scale the height similarly */
+  max-width: 800px; /* Optional: limit max size */
+  max-height: 800px;/* Optional: limit max size */
+  border: 4px solid #333;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chess-row {
+  display: flex;
+  flex: 1;
+}
+
+.chess-square {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;  /* Adjust font size */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  border: 1px solid #333; /* Add border between squares */
+}
+
+.chess-square.light {
+  background-color: #f0d9b5; /* Light square color */
+}
+
+.chess-square.dark {
+  background-color: #b58863; /* Dark square color */
+}
+
+.chess-square:hover {
+  opacity: 0.8;
+}
+
+/* Highlight selected square */
+.chess-square.selected {
+  background-color: rgba(255, 255, 0, 0.5); /* Yellow highlight */
+}
+
+/* Highlight valid move squares */
+.chess-square.valid-move {
+  background-color: rgba(0, 255, 0, 0.5); /* Green highlight */
+}
+
+/* Add coordinates */
+.chess-square::before,
+.chess-square::after {
+  position: absolute;
+  color: rgba(0, 0, 0, 0.3);
+  font-size: 0.8rem;
+}
+
+.chess-square::before {
+  top: 4px;
+  left: 6px;
+}
+
+.chess-square::after {
+  bottom: 4px;
+  right: 6px;
+}
+
+.chess-square.valid-move {
+  background-color: rgba(0, 255, 0, 0.5); /* Light green highlight */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .chess-board {
+    width: 80vmin;  /* Adjust width for smaller screens */
+    height: 80vmin; /* Adjust height for smaller screens */
+  }
+  
+  .chess-square {
+    font-size: 2rem; /* Adjust font size */
+  }
+}
+
+@media (max-width: 480px) {
+  .chess-board {
+    width: 70vmin;  /* Further adjustment for small screens */
+    height: 70vmin; /* Further adjustment for small screens */
+  }
+  
+  .chess-square {
+    font-size: 1.5rem; /* Further adjustment for smaller font */
+  }
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content h2 {
+  margin-bottom: 20px;
+  color: #333; /* Visible text color */
+  font-size: 1.5rem; /* Adjust for visibility */
+  font-weight: bold;
+}
+
+.popup-content button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #0056b3;
+}
+
+.white-piece {
+  color: white;
+}
+
+.black-piece {
+  color: black;
+}

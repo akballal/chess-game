@@ -22,6 +22,7 @@ const ChessBoardOnline = () => {
   const [playerColor, setPlayerColor] = useState(null);
   const [opponentJoined, setOpponentJoined] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [capturedPieces, setCapturedPieces] = useState({ w: [], b: [] }); // Captured pieces state
 
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
@@ -55,6 +56,19 @@ const ChessBoardOnline = () => {
     newSocket.on('updateBoard', (board) => {
       console.log('Board update received:', board);
       setBoard(board); // Ensure the board state updates in the frontend
+  });
+
+  newSocket.on('capture', (piece) => {
+    // Update captured pieces when a piece is captured
+    setCapturedPieces((prevState) => {
+      const color = piece.color === 'w' ? 'w' : 'b';
+      const newCapturedPieces = { ...prevState, [color]: [...prevState[color], piece] };
+      return newCapturedPieces;
+    });
+  });
+
+  newSocket.on('check', (opponentColor) => {
+    alert(`${opponentColor} king is in Check!`);
   });
 
     return () => {
@@ -95,13 +109,14 @@ const ChessBoardOnline = () => {
       const moves = chess.moves({ square, verbose: true }).map((m) => m.to);
       setValidMoves(moves);
     } else if (selectedSquare) {
-      // Attempt to move the currently selected piece
       const isPromotion =
-        board[adjustedRowIndex][adjustedColIndex]?.type === 'p' &&
-        (square[1] === '8' || square[1] === '1');
+      chess.get(selectedSquare)?.type === 'p' && (square[1] === '8' || square[1] === '1');
+    
+    console.log("is promotion => ", isPromotion);
+    
   
       const promotion = isPromotion
-        ? prompt('Promote to (q/r/b/n):', 'q').toLowerCase() || 'q'
+        ? prompt('Promote to (q: ♕, r: ♖, b: ♗, n: ♘,):', 'q').toLowerCase() || 'q'
         : undefined;
   
       const move = chess.move({ from: selectedSquare, to: square, promotion });
@@ -116,6 +131,24 @@ const ChessBoardOnline = () => {
           to: move.to,
           promotion: move.promotion || undefined,
         });
+
+         // Capture logic
+         if (move.flags.includes('c')) {
+          const capturedPiece = {
+            color: move.color,
+            type: board[7 - rowIndex][colIndex]?.type, // get the captured piece type
+          };
+          socket.emit('capture', capturedPiece);
+        }
+        
+       // Check if the opponent's king is in check
+      if (chess.inCheck()) {
+        console.log('Check detected! Opponent\'s king is in check.');
+         const opponentColor = playerColor === 'w' ? 'Black' : 'White';
+        // alert(`${opponentColor} king is in Check!`);
+        socket.emit('check', ({opponentColor , gameId}));
+      }
+
       } else {
         alert('Invalid move');
       }
@@ -145,61 +178,82 @@ const ChessBoardOnline = () => {
 
   return (
     <div className="chess-board-container">
-      {!opponentJoined ? (
-        <div className="waiting-for-opponent">
-          <h2>
-            Created Game Room ID: {gameId}
-            <button onClick={copyToClipboard} title="Copy Game ID">
-              📋
-            </button>
-            {copySuccess && <span style={{ color: 'green' }}> Copied!</span>}
-          </h2>
-          <h2>Waiting for opponent to join...</h2>
-        </div>
-      ) : (
-        <>
-        <div className="chess-board">
-          {getTransformedBoard().map((row, rowIndex) => (
-            <div key={rowIndex} className="chess-row">
-              {row.map((cell, colIndex) => {
-                const isSelected = selectedSquare === `${COL_COORDS[colIndex]}${ROW_COORDS[rowIndex]}`;
-                const isValidMove = isValidMoveSquare(rowIndex, colIndex);
-
-                return (
-                  <div
-                    key={colIndex}
-                    className={`chess-square ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'} ${
-                      isSelected ? 'selected' : ''
-                    } ${isValidMove ? 'valid-move' : ''}`}
-                    onClick={() => handleSquareClick(rowIndex, colIndex)}
-                  >
-                    {cell && cell.color && cell.type && (
-                      <span className={cell.color === 'w' ? 'white-piece' : 'black-piece'}>
-                        {PIECES[cell.color][cell.type]}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+       <div className="captured-pieces">
+        <div className="captured-title">Captured Pieces</div>
+        <div className="captured-white">
+          <h3>White</h3>
+          {capturedPieces.w.map((piece, index) => (
+            <span key={index} className="captured-piece">
+              {PIECES[piece.color][piece.type]}
+            </span>
           ))}
         </div>
-        <div>
-        <button onClick={handleResign}>Resign</button>
-      </div></>
-      )}
-      
-      
-
-      {winner && (
-        <div className="popup">
-          <div className="popup-content">
-            <h2>{winner} Wins!</h2>
-            <button onClick={handleCloseGame}>Close Game</button>
-          </div>
+        <div className="captured-black">
+          <h3>Black</h3>
+          {capturedPieces.b.map((piece, index) => (
+            <span key={index} className="captured-piece">
+              {PIECES[piece.color][piece.type]}
+            </span>
+          ))}
         </div>
-      )}
+      </div>
+  {!opponentJoined ? (
+    <div className="waiting-for-opponent">
+      <h2>
+        Created Game Room ID: {gameId}
+        <button onClick={copyToClipboard} title="Copy Game ID">
+          📋
+        </button>
+        {copySuccess && <span style={{ color: 'green' }}> Copied!</span>}
+      </h2>
+      <h2>Waiting for opponent to join...</h2>
     </div>
+  ) : (
+    <>
+      <div className="chess-board">
+        {getTransformedBoard().map((row, rowIndex) => (
+          <div key={rowIndex} className="chess-row">
+            {row.map((cell, colIndex) => {
+              const isSelected = selectedSquare === `${COL_COORDS[colIndex]}${ROW_COORDS[rowIndex]}`;
+              const isValidMove = isValidMoveSquare(rowIndex, colIndex);
+
+              return (
+                <div
+                  key={colIndex}
+                  className={`chess-square ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'} ${
+                    isSelected ? 'selected' : ''
+                  } ${isValidMove ? 'valid-move' : ''}`}
+                  onClick={() => handleSquareClick(rowIndex, colIndex)}
+                >
+                  {cell && cell.color && cell.type && (
+                    <span className={cell.color === 'w' ? 'white-piece' : 'black-piece'}>
+                      {PIECES[cell.color][cell.type]}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="player-controls">
+        <button onClick={handleResign} className="resign-button">
+          Resign
+        </button>
+      </div>
+    </>
+  )}
+
+  {winner && (
+    <div className="popup">
+      <div className="popup-content">
+        <h2>{winner} Wins!</h2>
+        <button onClick={handleCloseGame}>Close Game</button>
+      </div>
+    </div>
+  )}
+</div>
+
   );
 };
 

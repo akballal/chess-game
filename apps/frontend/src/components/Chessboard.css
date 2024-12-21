@@ -151,8 +151,57 @@
 
 .white-piece {
   color: white;
+  font-weight: bold; /* Make white pieces bold */
 }
 
 .black-piece {
   color: black;
+}
+
+/* Style for Resign Button */
+.resign-button {
+  position: fixed; /* Position the button in a fixed place */
+  bottom: 20px;    /* 20px from the bottom */
+  right: 20px;     /* 20px from the right */
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #d9534f; /* Red color for resignation */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.2s;
+  z-index: 1001; /* Ensure it is above most elements */
+}
+
+.resign-button:hover {
+  background-color: #c9302c; /* Darker red on hover */
+  transform: scale(1.05);    /* Slightly enlarge the button */
+}
+
+.resign-button:active {
+  background-color: #ac2925; /* Even darker red on click */
+  transform: scale(0.95);    /* Shrink slightly on click */
+}
+
+.resign-button:focus {
+  outline: 2px solid #fff; /* Add a white outline for accessibility */
+  outline-offset: 2px;
+}
+
+/* Make the button responsive */
+@media (max-width: 768px) {
+  .resign-button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .resign-button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
 }

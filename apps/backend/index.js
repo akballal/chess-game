@@ -131,4 +131,10 @@ io.on('connection', (socket) => {
       }
     }
   });
+
+  socket.on('check', ({opponentColor, gameId}) => {
+    io.in(gameId).emit('check', opponentColor);
+  })
+
+  
 });

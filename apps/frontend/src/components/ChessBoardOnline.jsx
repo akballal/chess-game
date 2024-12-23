@@ -22,7 +22,8 @@ const ChessBoardOnline = () => {
   const [playerColor, setPlayerColor] = useState(null);
   const [opponentJoined, setOpponentJoined] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [capturedPieces, setCapturedPieces] = useState({ w: [], b: [] }); // Captured pieces state
+  const [capturedPieces, setCapturedPieces] = useState([]);
+  
 
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
@@ -58,18 +59,19 @@ const ChessBoardOnline = () => {
       setBoard(board); // Ensure the board state updates in the frontend
   });
 
-  newSocket.on('capture', (piece) => {
-    // Update captured pieces when a piece is captured
-    setCapturedPieces((prevState) => {
-      const color = piece.color === 'w' ? 'w' : 'b';
-      const newCapturedPieces = { ...prevState, [color]: [...prevState[color], piece] };
-      return newCapturedPieces;
-    });
-  });
-
   newSocket.on('check', (opponentColor) => {
     alert(`${opponentColor} king is in Check!`);
   });
+
+  newSocket.on('capture', (capturedPiece) => {
+    console.log("In useEffect capturedPiece =>", capturedPiece.color, capturedPiece.type);
+    setCapturedPieces((prev) => {
+      const updatedPieces = [...prev, capturedPiece];
+      console.log("Updated capturedPieces =>", updatedPieces); // Logs the correct updated array
+      return updatedPieces;
+    });
+  });
+  
 
     return () => {
       newSocket.disconnect();
@@ -134,11 +136,15 @@ const ChessBoardOnline = () => {
 
          // Capture logic
          if (move.flags.includes('c')) {
-          const capturedPiece = {
-            color: move.color,
-            type: board[7 - rowIndex][colIndex]?.type, // get the captured piece type
-          };
-          socket.emit('capture', capturedPiece);
+          const capturedPiece = board[adjustedRowIndex][adjustedColIndex];
+          const capturedPieceData = { color: capturedPiece.color, type: capturedPiece.type };
+          // setCapturedPieces((prev) => 
+          // [
+          //   ...prev, {color:capturedPiece.color, type:capturedPiece.type},
+          // ])
+          // setCapturedPieces((prev) => [...prev, capturedPieceData]);
+          console.log("capturedPieceData => ", capturedPieceData);
+          socket.emit('capture', {capturedPiece: capturedPieceData, gameId });
         }
         
        // Check if the opponent's king is in check
@@ -178,26 +184,7 @@ const ChessBoardOnline = () => {
 
   return (
     <div className="chess-board-container">
-       <div className="captured-pieces">
-        <div className="captured-title">Captured Pieces</div>
-        <div className="captured-white">
-          <h3>White</h3>
-          {capturedPieces.w.map((piece, index) => (
-            <span key={index} className="captured-piece">
-              {PIECES[piece.color][piece.type]}
-            </span>
-          ))}
-        </div>
-        <div className="captured-black">
-          <h3>Black</h3>
-          {capturedPieces.b.map((piece, index) => (
-            <span key={index} className="captured-piece">
-              {PIECES[piece.color][piece.type]}
-            </span>
-          ))}
-        </div>
-      </div>
-  {!opponentJoined ? (
+    {!opponentJoined ? (
     <div className="waiting-for-opponent">
       <h2>
         Created Game Room ID: {gameId}
@@ -210,38 +197,69 @@ const ChessBoardOnline = () => {
     </div>
   ) : (
     <>
-      <div className="chess-board">
-        {getTransformedBoard().map((row, rowIndex) => (
-          <div key={rowIndex} className="chess-row">
-            {row.map((cell, colIndex) => {
-              const isSelected = selectedSquare === `${COL_COORDS[colIndex]}${ROW_COORDS[rowIndex]}`;
-              const isValidMove = isValidMoveSquare(rowIndex, colIndex);
+  <div className="chess-board-wrapper">
+    <div className="captured-pieces-bottom-left white">
+      <div className="captured-pieces-list">
+        {capturedPieces
+          .filter((piece) => piece.color === playerColor)
+          .map((piece, index) => (
+            <span 
+            key={index} 
+            className={piece.color === 'w' ? 'captured-piece-white' : 'captured-piece-black'}>
+              {PIECES[piece.color][piece.type]}
+            </span>
+          ))}
+      </div>
+    </div>
 
-              return (
-                <div
-                  key={colIndex}
-                  className={`chess-square ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'} ${
-                    isSelected ? 'selected' : ''
-                  } ${isValidMove ? 'valid-move' : ''}`}
-                  onClick={() => handleSquareClick(rowIndex, colIndex)}
-                >
-                  {cell && cell.color && cell.type && (
-                    <span className={cell.color === 'w' ? 'white-piece' : 'black-piece'}>
-                      {PIECES[cell.color][cell.type]}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+    <div className="chess-board">
+      {getTransformedBoard().map((row, rowIndex) => (
+        <div key={rowIndex} className="chess-row">
+          {row.map((cell, colIndex) => {
+            const isSelected = selectedSquare === `${COL_COORDS[colIndex]}${ROW_COORDS[rowIndex]}`;
+            const isValidMove = isValidMoveSquare(rowIndex, colIndex);
+
+            return (
+              <div
+                key={colIndex}
+                className={`chess-square ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'} ${
+                  isSelected ? 'selected' : ''
+                } ${isValidMove ? 'valid-move' : ''}`}
+                onClick={() => handleSquareClick(rowIndex, colIndex)}
+              >
+                {cell && cell.color && cell.type && (
+                  <span className={cell.color === 'w' ? 'white-piece' : 'black-piece'}>
+                    {PIECES[cell.color][cell.type]}
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+
+    <div className="captured-pieces-bottom-left black">
+      <div className="captured-pieces-list">
+        {capturedPieces
+          .filter((piece) => piece.color !== playerColor)
+          .map((piece, index) => (
+            <span 
+            key={index} 
+            className={piece.color === 'w' ? 'captured-piece-white' : 'captured-piece-black'}>
+              {PIECES[piece.color][piece.type]}
+            </span>
+          ))}
       </div>
-      <div className="player-controls">
-        <button onClick={handleResign} className="resign-button">
-          Resign
-        </button>
-      </div>
-    </>
+    </div>
+  </div>
+  <div className="player-controls">
+          <button onClick={handleResign} className="resign-button">
+            Resign
+          </button>
+        </div>
+</>
+
   )}
 
   {winner && (

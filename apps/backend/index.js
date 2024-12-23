@@ -136,5 +136,10 @@ io.on('connection', (socket) => {
     io.in(gameId).emit('check', opponentColor);
   })
 
+  socket.on('capture', ({capturedPiece, gameId}) => {
+    console.log("In backend CapturedPiece => ", capturedPiece)
+    io.in(gameId).emit('capture', capturedPiece);
+  })
+
   
 });

@@ -1,3 +1,5 @@
+
+
 /* Ensure the container fills the screen */
 .chess-board-container {
   display: flex;
@@ -17,8 +19,8 @@
   flex-direction: column;
   width: 90vmin;    /* Scale the width to 90% of the viewport's smallest dimension */
   height: 90vmin;   /* Scale the height similarly */
-  max-width: 800px; /* Optional: limit max size */
-  max-height: 800px;/* Optional: limit max size */
+  max-width: 1000px; /* Optional: limit max size */
+  max-height: 1000px;/* Optional: limit max size */
   border: 4px solid #333;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -204,4 +206,67 @@
     padding: 6px 12px;
     font-size: 0.8rem;
   }
+}
+
+
+.captured-pieces {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.captured-pieces-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.captured-piece-black {
+  font-size: 45px;
+  color: black;
+}
+
+.captured-piece-white {
+  font-size: 45px;
+  color: white;
+  font-weight: bold; /* Make white pieces bold */
+}
+
+
+.chess-board-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.captured-pieces-bottom-left {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.captured-pieces-bottom-left.white {
+  /*bottom: calc(100% + 20px); /* Adjust this to place near the white player side */
+  position: fixed; /* Position the button in a fixed place */
+  bottom: 20px;    /* 20px from the bottom */
+  left: 20px; 
+}
+
+.captured-pieces-bottom-left.black {
+  /*top: calc(100% + 20px); /* Adjust this to place near the black player side */
+  position: fixed; /* Position the button in a fixed place */
+  top: 20px;    /* 20px from the bottom */
+  left: 20px; 
+}
+
+.captured-pieces-list {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
 }

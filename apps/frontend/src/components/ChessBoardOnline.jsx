@@ -31,7 +31,9 @@ const ChessBoardOnline = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001');
+    const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+    const newSocket = io(backendUrl)
+    //const newSocket = io('http://localhost:3001');
     setSocket(newSocket);
 
     newSocket.emit('joinGame', { gameId });

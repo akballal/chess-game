@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: 'https://chess-game-frontend-3ba1zvttn-akballals-projects.vercel.app',
     methods: ['GET', 'POST'],
   },
 });

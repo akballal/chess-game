@@ -31,9 +31,10 @@ const ChessBoardOnline = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+    //const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+    const backendUrl = 'https://chess-game-server-zb9z.onrender.com';
     console.log('Backend URL:', backendUrl);
-    console.log(import.meta.env);
+    //console.log(import.meta.env);
     const newSocket = io(backendUrl)
     //const newSocket = io('http://localhost:3001');
     setSocket(newSocket);

@@ -22,15 +22,15 @@ const HomePage = () => {
   return (
     <div className="home-container">
       <h1>Welcome to Chess</h1>
-      <p>Choose your game mode:</p>
+      <p>Choose your game mode and start playing now!</p>
 
       <div className="game-mode-container">
         <div className="offline-mode">
           <h2>Play Offline</h2>
-          <p>Enter player names and play locally.</p>
+          <p>Enter player names and play locally on this device.</p>
           <div className="input-container">
             <div>
-              <label>Player 1 (White): </label>
+              <label>Player 1 (White):</label>
               <input
                 type="text"
                 value={whitePlayer}
@@ -39,7 +39,7 @@ const HomePage = () => {
               />
             </div>
             <div>
-              <label>Player 2 (Black): </label>
+              <label>Player 2 (Black):</label>
               <input
                 type="text"
                 value={blackPlayer}

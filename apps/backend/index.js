@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
   socket.on('joinGame', ({ gameId, isJoin }) => {
     console.log(`Player ${socket.id} joined game - ${gameId}`);
     console.log("isJoin: ", isJoin)
-    console.log("type of isJoin: ", typeof(isJoin))
+    console.log("type of isJoin: ", typeof (isJoin))
     if (isJoin === "false") {
       gameRooms[gameId] = {
         chess: new Chess(),

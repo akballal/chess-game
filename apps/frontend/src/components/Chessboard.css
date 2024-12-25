@@ -1,26 +1,33 @@
-
-
 /* Ensure the container fills the screen */
 .chess-board-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;   /* Full screen height */
-  width: 100vw;    /* Full screen width */
-  margin: 0;       /* Remove any default margins */
-  padding: 0;      /* Remove padding */
-  background-color: #643e3e;
-  overflow: hidden; /* Prevent scrollbars */
+  height: 100vh;
+  /* Full screen height */
+  width: 100vw;
+  /* Full screen width */
+  margin: 0;
+  /* Remove any default margins */
+  padding: 0;
+  /* Remove padding */
+  background: linear-gradient(135deg, #3a6073 0%, #16222a 100%);
+  overflow: hidden;
+  /* Prevent scrollbars */
 }
 
 /* Make the board size responsive */
 .chess-board {
   display: flex;
   flex-direction: column;
-  width: 90vmin;    /* Scale the width to 90% of the viewport's smallest dimension */
-  height: 90vmin;   /* Scale the height similarly */
-  max-width: 1000px; /* Optional: limit max size */
-  max-height: 1000px;/* Optional: limit max size */
+  width: 90vmin;
+  /* Scale the width to 90% of the viewport's smallest dimension */
+  height: 90vmin;
+  /* Scale the height similarly */
+  max-width: 1000px;
+  /* Optional: limit max size */
+  max-height: 1000px;
+  /* Optional: limit max size */
   border: 4px solid #333;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -35,19 +42,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 3rem;  /* Adjust font size */
+  font-size: 3rem;
+  /* Adjust font size */
   cursor: pointer;
   transition: background-color 0.3s;
   position: relative;
-  border: 1px solid #333; /* Add border between squares */
+  border: 1px solid #333;
+  /* Add border between squares */
 }
 
 .chess-square.light {
-  background-color: #f0d9b5; /* Light square color */
+  background-color: #f0d9b5;
+  /* Light square color */
 }
 
 .chess-square.dark {
-  background-color: #b58863; /* Dark square color */
+  background-color: #b58863;
+  /* Dark square color */
 }
 
 .chess-square:hover {
@@ -56,12 +67,14 @@
 
 /* Highlight selected square */
 .chess-square.selected {
-  background-color: rgba(255, 255, 0, 0.5); /* Yellow highlight */
+  background-color: rgba(255, 255, 0, 0.5);
+  /* Yellow highlight */
 }
 
 /* Highlight valid move squares */
 .chess-square.valid-move {
-  background-color: rgba(0, 255, 0, 0.5); /* Green highlight */
+  background-color: rgba(0, 255, 0, 0.5);
+  /* Green highlight */
 }
 
 /* Add coordinates */
@@ -83,29 +96,36 @@
 }
 
 .chess-square.valid-move {
-  background-color: rgba(0, 255, 0, 0.5); /* Light green highlight */
+  background-color: rgba(0, 255, 0, 0.5);
+  /* Light green highlight */
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
   .chess-board {
-    width: 80vmin;  /* Adjust width for smaller screens */
-    height: 80vmin; /* Adjust height for smaller screens */
+    width: 80vmin;
+    /* Adjust width for smaller screens */
+    height: 80vmin;
+    /* Adjust height for smaller screens */
   }
-  
+
   .chess-square {
-    font-size: 2rem; /* Adjust font size */
+    font-size: 2rem;
+    /* Adjust font size */
   }
 }
 
 @media (max-width: 480px) {
   .chess-board {
-    width: 70vmin;  /* Further adjustment for small screens */
-    height: 70vmin; /* Further adjustment for small screens */
+    width: 70vmin;
+    /* Further adjustment for small screens */
+    height: 70vmin;
+    /* Further adjustment for small screens */
   }
-  
+
   .chess-square {
-    font-size: 1.5rem; /* Further adjustment for smaller font */
+    font-size: 1.5rem;
+    /* Further adjustment for smaller font */
   }
 }
 
@@ -132,8 +152,10 @@
 
 .popup-content h2 {
   margin-bottom: 20px;
-  color: #333; /* Visible text color */
-  font-size: 1.5rem; /* Adjust for visibility */
+  color: #333;
+  /* Visible text color */
+  font-size: 1.5rem;
+  /* Adjust for visibility */
   font-weight: bold;
 }
 
@@ -153,7 +175,8 @@
 
 .white-piece {
   color: white;
-  font-weight: bold; /* Make white pieces bold */
+  font-weight: bold;
+  /* Make white pieces bold */
 }
 
 .black-piece {
@@ -162,34 +185,44 @@
 
 /* Style for Resign Button */
 .resign-button {
-  position: fixed; /* Position the button in a fixed place */
-  bottom: 20px;    /* 20px from the bottom */
-  right: 20px;     /* 20px from the right */
+  position: fixed;
+  /* Position the button in a fixed place */
+  bottom: 20px;
+  /* 20px from the bottom */
+  right: 20px;
+  /* 20px from the right */
   padding: 10px 20px;
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background-color: #d9534f; /* Red color for resignation */
+  background-color: #d9534f;
+  /* Red color for resignation */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s, transform 0.2s;
-  z-index: 1001; /* Ensure it is above most elements */
+  z-index: 1001;
+  /* Ensure it is above most elements */
 }
 
 .resign-button:hover {
-  background-color: #c9302c; /* Darker red on hover */
-  transform: scale(1.05);    /* Slightly enlarge the button */
+  background-color: #c9302c;
+  /* Darker red on hover */
+  transform: scale(1.05);
+  /* Slightly enlarge the button */
 }
 
 .resign-button:active {
-  background-color: #ac2925; /* Even darker red on click */
-  transform: scale(0.95);    /* Shrink slightly on click */
+  background-color: #ac2925;
+  /* Even darker red on click */
+  transform: scale(0.95);
+  /* Shrink slightly on click */
 }
 
 .resign-button:focus {
-  outline: 2px solid #fff; /* Add a white outline for accessibility */
+  outline: 2px solid #fff;
+  /* Add a white outline for accessibility */
   outline-offset: 2px;
 }
 
@@ -230,7 +263,8 @@
 .captured-piece-white {
   font-size: 45px;
   color: white;
-  font-weight: bold; /* Make white pieces bold */
+  font-weight: bold;
+  /* Make white pieces bold */
 }
 
 
@@ -253,16 +287,20 @@
 
 .captured-pieces-bottom-left.white {
   /*bottom: calc(100% + 20px); /* Adjust this to place near the white player side */
-  position: fixed; /* Position the button in a fixed place */
-  bottom: 20px;    /* 20px from the bottom */
-  left: 20px; 
+  position: fixed;
+  /* Position the button in a fixed place */
+  bottom: 20px;
+  /* 20px from the bottom */
+  left: 20px;
 }
 
 .captured-pieces-bottom-left.black {
   /*top: calc(100% + 20px); /* Adjust this to place near the black player side */
-  position: fixed; /* Position the button in a fixed place */
-  top: 20px;    /* 20px from the bottom */
-  left: 20px; 
+  position: fixed;
+  /* Position the button in a fixed place */
+  top: 20px;
+  /* 20px from the bottom */
+  left: 20px;
 }
 
 .captured-pieces-list {
@@ -275,19 +313,90 @@
   padding: 10px 20px;
   font-size: 16px;
   cursor: pointer;
-  background-color: #007bff; /* Button color */
+  background-color: #007bff;
+  /* Button color */
   color: white;
   border: none;
   border-radius: 5px;
 }
 
 .retry-button:hover {
-  background-color: #0056b3; /* Hover effect */
+  background-color: #0056b3;
+  /* Hover effect */
 }
+
 .button-container {
   display: flex;
-  justify-content: center; /* Ensure button is centered horizontally */
+  justify-content: center;
+  /* Ensure button is centered horizontally */
 }
+
 .spacer {
-  height: 20px; /* Add space between error message and button */
+  height: 20px;
+  /* Add space between error message and button */
+}
+
+
+.waiting-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Full height to vertically center the content */
+  text-align: center;
+}
+
+.waiting-header {
+  margin-bottom: 20px; /* Space between header and content */
+}
+
+.room-id {
+  font-size: 1.5em;
+}
+
+.game-id {
+  color: #2d89ef;
+  background: #eef6ff;
+  padding: 3px 3px;
+  border-radius: 5px;
+}
+
+.copy-btn {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.copy-success {
+  color: green;
+  font-size: 0.9em;
+  margin-left: 10px;
+}
+
+.waiting-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top: 4px solid #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px; /* Space between spinner and text */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.waiting-text {
+  font-size: 1.5em;
 }

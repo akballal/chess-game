@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter , Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './components/HomePage';
 import ChessboardOffline from './components/ChessboardOffline'
 import OnlineSetup from './components/OnlineSetup';

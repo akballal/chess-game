@@ -25,7 +25,7 @@ const ChessBoardOnline = () => {
   const [capturedPieces, setCapturedPieces] = useState([]);
   const [resignedby, setResignedby] = useState(null);
   const [error, setError] = useState(null);
-  
+
 
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
@@ -34,7 +34,7 @@ const ChessBoardOnline = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const backendUrl =  import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
     //const backendUrl = 'https://chess-game-server-zb9z.onrender.com';
     console.log('Backend URL:', backendUrl);
     console.log('join: ', isJoin)
@@ -67,7 +67,7 @@ const ChessBoardOnline = () => {
       setWinner(winner === 'Black' ? 'Black' : 'White');
     });
 
-    newSocket.on('gameOverByResignation', ({winner}) => {
+    newSocket.on('gameOverByResignation', ({ winner }) => {
       setResignedby(winner === 'Black' ? 'White' : 'Black')
       setWinner(winner === 'Black' ? 'Black' : 'White')
     })
@@ -76,29 +76,28 @@ const ChessBoardOnline = () => {
     newSocket.on('updateBoard', (board) => {
       console.log('Board update received:', board);
       setBoard(board); // Ensure the board state updates in the frontend
-  });
-
-  newSocket.on('check', (opponentColor) => {
-    alert(`${opponentColor} king is in Check!`);
-  });
-
-  newSocket.on('capture', (capturedPiece) => {
-    console.log("In useEffect capturedPiece =>", capturedPiece.color, capturedPiece.type);
-    setCapturedPieces((prev) => {
-      const updatedPieces = [...prev, capturedPiece];
-      console.log("Updated capturedPieces =>", updatedPieces); // Logs the correct updated array
-      return updatedPieces;
     });
-  });
-  
+
+    newSocket.on('check', (opponentColor) => {
+      alert(`${opponentColor} king is in Check!`);
+    });
+
+    newSocket.on('capture', (capturedPiece) => {
+      console.log("In useEffect capturedPiece =>", capturedPiece.color, capturedPiece.type);
+      setCapturedPieces((prev) => {
+        const updatedPieces = [...prev, capturedPiece];
+        console.log("Updated capturedPieces =>", updatedPieces); // Logs the correct updated array
+        return updatedPieces;
+      });
+    });
+
 
     return () => {
       newSocket.disconnect();
     };
   }, [chess, gameId]);
 
-  const handleCloseGame = () =>
-  {
+  const handleCloseGame = () => {
     navigate('/')
   }
 
@@ -115,11 +114,11 @@ const ChessBoardOnline = () => {
     const piece = board[adjustedRowIndex][adjustedColIndex];
 
     // Check if it's the current player's turn
-  if (chess.turn() !== playerColor) {
-    alert(`It's ${chess.turn() === 'w' ? 'White' : 'Black'}'s turn! Please wait for your turn.`);
-    return;
-  }
-  
+    if (chess.turn() !== playerColor) {
+      alert(`It's ${chess.turn() === 'w' ? 'White' : 'Black'}'s turn! Please wait for your turn.`);
+      return;
+    }
+
     if (selectedSquare === square) {
       // Deselect the currently selected piece
       setSelectedSquare(null);
@@ -131,21 +130,21 @@ const ChessBoardOnline = () => {
       setValidMoves(moves);
     } else if (selectedSquare) {
       const isPromotion =
-      chess.get(selectedSquare)?.type === 'p' && (square[1] === '8' || square[1] === '1');
-    
-    console.log("is promotion => ", isPromotion);
-    
-  
+        chess.get(selectedSquare)?.type === 'p' && (square[1] === '8' || square[1] === '1');
+
+      console.log("is promotion => ", isPromotion);
+
+
       const promotion = isPromotion
         ? prompt('Promote to (q: ♕, r: ♖, b: ♗, n: ♘,):', 'q').toLowerCase() || 'q'
         : undefined;
-  
+
       const move = chess.move({ from: selectedSquare, to: square, promotion });
       if (move) {
         setBoard(chess.board());
         setSelectedSquare(null);
         setValidMoves([]);
-  
+
         socket.emit('move', {
           gameId,
           from: move.from,
@@ -153,8 +152,8 @@ const ChessBoardOnline = () => {
           promotion: move.promotion || undefined,
         });
 
-         // Capture logic
-         if (move.flags.includes('c')) {
+        // Capture logic
+        if (move.flags.includes('c')) {
           const capturedPiece = board[adjustedRowIndex][adjustedColIndex];
           const capturedPieceData = { color: capturedPiece.color, type: capturedPiece.type };
           // setCapturedPieces((prev) => 
@@ -163,16 +162,16 @@ const ChessBoardOnline = () => {
           // ])
           // setCapturedPieces((prev) => [...prev, capturedPieceData]);
           console.log("capturedPieceData => ", capturedPieceData);
-          socket.emit('capture', {capturedPiece: capturedPieceData, gameId });
+          socket.emit('capture', { capturedPiece: capturedPieceData, gameId });
         }
-        
-       // Check if the opponent's king is in check
-      if (chess.inCheck()) {
-        console.log('Check detected! Opponent\'s king is in check.');
-         const opponentColor = playerColor === 'w' ? 'Black' : 'White';
-        // alert(`${opponentColor} king is in Check!`);
-        socket.emit('check', ({opponentColor , gameId}));
-      }
+
+        // Check if the opponent's king is in check
+        if (chess.inCheck()) {
+          console.log('Check detected! Opponent\'s king is in check.');
+          const opponentColor = playerColor === 'w' ? 'Black' : 'White';
+          // alert(`${opponentColor} king is in Check!`);
+          socket.emit('check', ({ opponentColor, gameId }));
+        }
 
       } else {
         alert('Invalid move');
@@ -181,8 +180,8 @@ const ChessBoardOnline = () => {
       alert(`You can only move ${playerColor === 'w' ? 'White' : 'Black'} pieces!`);
     }
   };
-  
-  
+
+
 
   const isValidMoveSquare = (row, col) => {
     const adjustedRowIndex = playerColor === 'b' ? 7 - row : row;
@@ -205,122 +204,126 @@ const ChessBoardOnline = () => {
       ? [...board].reverse().map((row) => [...row].reverse())
       : board;
 
-      if (error) {
-        return (
-          <div className="chess-board-container">
-            <div className="waiting-for-opponent">
-              <h2>Error: {error}</h2>
-              <div className="spacer"></div>
-              <div className="button-container">
-                <button onClick={handleError} className="retry-button">
-                  OK
-                </button>
+  if (error) {
+    return (
+      <div className="chess-board-container">
+        <div className="waiting-for-opponent">
+          <h2>Error: {error}</h2>
+          <div className="spacer"></div>
+          <div className="button-container">
+            <button onClick={handleError} className="retry-button">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+  return (
+    <div className="chess-board-container">
+
+{!opponentJoined ? (
+  <div className="waiting-screen">
+    <div className="waiting-header">
+      <h2 className="room-id">
+        Created Game Room ID: <span className="game-id">{gameId}</span>
+        <button onClick={copyToClipboard} className="copy-btn" title="Copy Game ID">
+          📋
+        </button>
+        {copySuccess && <span className="copy-success">Copied!</span>}
+      </h2>
+    </div>
+    <div className="waiting-content">
+      <div className="loading-spinner"></div>
+      <h2 className="waiting-text">Waiting for opponent to join...</h2>
+    </div>
+  </div>
+) : (
+        <>
+          <div className="chess-board-wrapper">
+            <div className="captured-pieces-bottom-left white">
+              <div className="captured-pieces-list">
+                {capturedPieces
+                  .filter((piece) => piece.color === playerColor)
+                  .map((piece, index) => (
+                    <span
+                      key={index}
+                      className={piece.color === 'w' ? 'captured-piece-white' : 'captured-piece-black'}>
+                      {PIECES[piece.color][piece.type]}
+                    </span>
+                  ))}
+              </div>
+            </div>
+
+            <div className="chess-board">
+              {getTransformedBoard().map((row, rowIndex) => (
+                <div key={rowIndex} className="chess-row">
+                  {row.map((cell, colIndex) => {
+                    const isSelected = selectedSquare === `${COL_COORDS[colIndex]}${ROW_COORDS[rowIndex]}`;
+                    const isValidMove = isValidMoveSquare(rowIndex, colIndex);
+
+                    return (
+                      <div
+                        key={colIndex}
+                        className={`chess-square ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'} ${isSelected ? 'selected' : ''
+                          } ${isValidMove ? 'valid-move' : ''}`}
+                        onClick={() => handleSquareClick(rowIndex, colIndex)}
+                      >
+                        {cell && cell.color && cell.type && (
+                          <span className={cell.color === 'w' ? 'white-piece' : 'black-piece'}>
+                            {PIECES[cell.color][cell.type]}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
+            <div className="captured-pieces-bottom-left black">
+              <div className="captured-pieces-list">
+                {capturedPieces
+                  .filter((piece) => piece.color !== playerColor)
+                  .map((piece, index) => (
+                    <span
+                      key={index}
+                      className={piece.color === 'w' ? 'captured-piece-white' : 'captured-piece-black'}>
+                      {PIECES[piece.color][piece.type]}
+                    </span>
+                  ))}
               </div>
             </div>
           </div>
-        );
-      }
-      
-      
-  return (
-    <div className="chess-board-container">
-      
-    {!opponentJoined ? (
-    <div className="waiting-for-opponent">
-      <h2>
-        Created Game Room ID: {gameId}
-        <button onClick={copyToClipboard} title="Copy Game ID">
-          📋
-        </button>
-        {copySuccess && <span style={{ color: 'green' }}> Copied!</span>}
-      </h2>
-      <h2>Waiting for opponent to join...</h2>
-    </div>
-  ) : (
-    <>
-  <div className="chess-board-wrapper">
-    <div className="captured-pieces-bottom-left white">
-      <div className="captured-pieces-list">
-        {capturedPieces
-          .filter((piece) => piece.color === playerColor)
-          .map((piece, index) => (
-            <span 
-            key={index} 
-            className={piece.color === 'w' ? 'captured-piece-white' : 'captured-piece-black'}>
-              {PIECES[piece.color][piece.type]}
-            </span>
-          ))}
-      </div>
-    </div>
+          <div className="player-controls">
+            <button onClick={handleResign} className="resign-button">
+              Resign
+            </button>
+          </div>
+        </>
 
-    <div className="chess-board">
-      {getTransformedBoard().map((row, rowIndex) => (
-        <div key={rowIndex} className="chess-row">
-          {row.map((cell, colIndex) => {
-            const isSelected = selectedSquare === `${COL_COORDS[colIndex]}${ROW_COORDS[rowIndex]}`;
-            const isValidMove = isValidMoveSquare(rowIndex, colIndex);
+      )}
 
-            return (
-              <div
-                key={colIndex}
-                className={`chess-square ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'} ${
-                  isSelected ? 'selected' : ''
-                } ${isValidMove ? 'valid-move' : ''}`}
-                onClick={() => handleSquareClick(rowIndex, colIndex)}
-              >
-                {cell && cell.color && cell.type && (
-                  <span className={cell.color === 'w' ? 'white-piece' : 'black-piece'}>
-                    {PIECES[cell.color][cell.type]}
-                  </span>
-                )}
-              </div>
-            );
-          })}
+      {(resignedby === null && winner) && (
+        <div className="popup">
+          <div className="popup-content">
+            <h2>{winner} Wins!</h2>
+            <button onClick={handleCloseGame}>Close Game</button>
+          </div>
         </div>
-      ))}
-    </div>
-
-    <div className="captured-pieces-bottom-left black">
-      <div className="captured-pieces-list">
-        {capturedPieces
-          .filter((piece) => piece.color !== playerColor)
-          .map((piece, index) => (
-            <span 
-            key={index} 
-            className={piece.color === 'w' ? 'captured-piece-white' : 'captured-piece-black'}>
-              {PIECES[piece.color][piece.type]}
-            </span>
-          ))}
-      </div>
-    </div>
-  </div>
-  <div className="player-controls">
-          <button onClick={handleResign} className="resign-button">
-            Resign
-          </button>
+      )}
+      {resignedby && (
+        <div className="popup">
+          <div className="popup-content">
+            <h2>{winner} Wins! </h2>
+            <h2>{resignedby} resigned the Game.</h2>
+            <button onClick={handleCloseGame}>Close Game</button>
+          </div>
         </div>
-</>
-
-  )}
-
-  {(resignedby === null && winner) && (
-    <div className="popup">
-      <div className="popup-content">
-        <h2>{winner} Wins!</h2>
-        <button onClick={handleCloseGame}>Close Game</button>
-      </div>
+      )}
     </div>
-  )}
-  {resignedby && (
-    <div className="popup">
-      <div className="popup-content">
-        <h2>{winner} Wins! </h2>
-        <h2>{resignedby} resigned the Game.</h2>
-        <button onClick={handleCloseGame}>Close Game</button>
-      </div>
-    </div>
-  )}
-</div>
 
   );
 };

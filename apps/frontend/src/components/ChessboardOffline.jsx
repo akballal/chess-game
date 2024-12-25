@@ -39,13 +39,13 @@ const ChessBoardOffline = () => {
       // Unselect the square if clicked again
       setSelectedSquare(null);
       setValidMoves([]);
-    } 
+    }
     else if (piece && piece.color === chess.turn()) {
       // Select a new piece of the same color
       setSelectedSquare(square);
       const moves = chess.moves({ square, verbose: true }).map((m) => m.to);
       setValidMoves(moves);
-    } 
+    }
     else if (selectedSquare) {
       const isPromotion = chess.get(selectedSquare)?.type === 'p' && (square[1] === '8' || square[1] === '1');
       console.log("is promotion => ", isPromotion);
@@ -70,33 +70,33 @@ const ChessBoardOffline = () => {
         setValidMoves([]);
       }
 
-       // Capture logic
-       if (move.flags.includes('c')) {
+      // Capture logic
+      if (move.flags.includes('c')) {
         const capturedPiece = board[rowIndex][colIndex];
         const capturedPieceData = { color: capturedPiece.color, type: capturedPiece.type };
-        
+
         console.log("capturedPieceData => ", capturedPieceData);
         setCapturedPieces((prev) => {
           const updatedPieces = [...prev, capturedPiece];
           console.log("Updated capturedPieces =>", updatedPieces); // Logs the correct updated array
           return updatedPieces;
         });
-        
+
       }
 
       if (chess.inCheck()) {
         console.log('Check detected! Opponent\'s king is in check.');
-         const opponentColor = chess.turn() === 'w' ? whitePlayer : blackPlayer;;
+        const opponentColor = chess.turn() === 'w' ? whitePlayer : blackPlayer;;
         // alert(`${opponentColor} king is in Check!`);
         alert(`${opponentColor}'s king is in Check!`);
       }
     } else if (piece) {
       // Restrict selection to the current player's pieces
-if (piece.color !== chess.turn()) {
-  const currentPlayer = chess.turn() === 'w' ? whitePlayer : blackPlayer;
-  alert(`It's ${currentPlayer}'s turn!`);
-  return;
-}
+      if (piece.color !== chess.turn()) {
+        const currentPlayer = chess.turn() === 'w' ? whitePlayer : blackPlayer;
+        alert(`It's ${currentPlayer}'s turn!`);
+        return;
+      }
 
       // Highlight valid moves
       const moves = chess.moves({ square, verbose: true }).map((m) => m.to);
@@ -113,18 +113,18 @@ if (piece.color !== chess.turn()) {
   return (
     <div className="chess-board-container">
       <div className="captured-pieces-bottom-left white">
-      <div className="captured-pieces-list">
-        {capturedPieces
-          .filter((piece) => piece.color === 'b')
-          .map((piece, index) => (
-            <span 
-            key={index} 
-            className='captured-piece-black'>
-              {PIECES[piece.color][piece.type]}
-            </span>
-          ))}
+        <div className="captured-pieces-list">
+          {capturedPieces
+            .filter((piece) => piece.color === 'b')
+            .map((piece, index) => (
+              <span
+                key={index}
+                className='captured-piece-black'>
+                {PIECES[piece.color][piece.type]}
+              </span>
+            ))}
+        </div>
       </div>
-    </div>
       <div className="chess-board">
         {board.map((row, rowIndex) => (
           <div key={rowIndex} className="chess-row">
@@ -154,18 +154,18 @@ if (piece.color !== chess.turn()) {
         ))}
       </div>
       <div className="captured-pieces-bottom-left black">
-      <div className="captured-pieces-list">
-        {capturedPieces
-          .filter((piece) => piece.color === 'w')
-          .map((piece, index) => (
-            <span 
-            key={index} 
-            className='captured-piece-white'>
-              {PIECES[piece.color][piece.type]}
-            </span>
-          ))}
+        <div className="captured-pieces-list">
+          {capturedPieces
+            .filter((piece) => piece.color === 'w')
+            .map((piece, index) => (
+              <span
+                key={index}
+                className='captured-piece-white'>
+                {PIECES[piece.color][piece.type]}
+              </span>
+            ))}
+        </div>
       </div>
-    </div>
       {winner && (
         <div className="popup">
           <div className="popup-content">

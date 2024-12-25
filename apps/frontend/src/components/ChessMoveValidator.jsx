@@ -2,15 +2,14 @@
 const getPieceColor = (piece) => {
     const whitePieces = ['♔', '♕', '♖', '♗', '♘', '♙'];
     const blackPieces = ['♚', '♛', '♜', '♝', '♞', '♟'];
-    
+
     if (whitePieces.includes(piece)) return 'white';
     if (blackPieces.includes(piece)) return 'black';
     return null;
-  };
+};
 
 class ChessMoveValidator {
-    constructor(board)
-    {
+    constructor(board) {
         this.board = board;
     }
 }

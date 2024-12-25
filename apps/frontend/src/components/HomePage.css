@@ -1,95 +1,118 @@
-/* Apply to the home page container */
 .home-container {
-    display: flex;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw; /* Reduced padding to increase usable width */
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+/* Heading styling */
+h1 {
+  margin-bottom: 15px;
+  font-size: 3rem; /* Larger font size */
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+/* Subheading */
+p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Game mode container */
+.game-mode-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1200px; /* Constrain max width for readability */
+  gap: 40px;
+}
+
+/* Game mode sections */
+.offline-mode, .online-mode {
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  width: 45%; /* Adjusted width for balanced layout */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Titles in game mode */
+.offline-mode h2, .online-mode h2 {
+  font-size: 1.8rem;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+/* Paragraph descriptions */
+.offline-mode p, .online-mode p {
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: #666;
+}
+
+/* Input container styling */
+.input-container {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Labels and inputs */
+label {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input {
+  padding: 10px;
+  font-size: 1rem;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Play buttons */
+.play-btn {
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.play-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .game-mode-container {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    width: 100vw; /* Fit to screen width */
-    background-color: #f0f4f8; /* Soft light background color */
-    font-family: 'Arial', sans-serif;
-    color: #333; /* Text color */
-    box-sizing: border-box;
-  }
-  
-  /* Heading styling */
-  h1 {
-    margin-bottom: 20px;
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #333;
-    text-align: center; /* Ensure the title is centered */
-  }
-  
-  /* Input container styling */
-  .input-container {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  /* Styling for input fields */
-  input {
-    padding: 10px;
-    margin: 10px;
-    font-size: 16px;
-    width: 250px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  /* Button to start the game */
-  .play-btn {
-    padding: 15px 30px;
-    font-size: 18px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 30px;
-    transition: background-color 0.3s ease;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  /* Button hover effect */
-  .play-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Container for color selection */
-  .color-selection {
-    display: flex;
     gap: 20px;
-    justify-content: center;
-    margin-top: 20px;
   }
-  
-  /* Individual color buttons */
-  .color-btn {
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #eee;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+
+  .offline-mode, .online-mode {
+    width: 100%;
   }
-  
-  /* Selected color button styling */
-  .color-btn.selected {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  /* Hover effect for color buttons */
-  .color-btn:hover {
-    background-color: #ddd;
-  }
-  
+}

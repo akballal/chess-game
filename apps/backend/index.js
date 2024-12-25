@@ -6,17 +6,25 @@ const cors = require('cors');
 //const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173'];
 const app = express();
 const server = http.createServer(app);
+
+// Allow only your frontend's URL for CORS
+const allowedOrigins = ['https://chess-game-frontend-3ba1zvttn-akballals-projects.vercel.app'];
+
 const io = new Server(server, {
   cors: {
-    origin: 'https://chess-game-frontend-3ba1zvttn-akballals-projects.vercel.app',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
+    credentials: true, // Required for cross-origin requests
   },
 });
 
 
 
-// Middleware
-app.use(cors());
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true, // Allow cookies if required
+}));
+
 
 // Endpoint for testing
 app.get('/', (req, res) => {

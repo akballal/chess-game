@@ -3,12 +3,12 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { Chess } = require('chess.js');
 const cors = require('cors');
-//const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173'];
+const allowedOrigins = [process.env.FRONTEND_URL || 'http://localhost:5173'];
 const app = express();
 const server = http.createServer(app);
 
 // Allow only your frontend's URL for CORS
-const allowedOrigins = ['https://chess-game-frontend-3ba1zvttn-akballals-projects.vercel.app'];
+//const allowedOrigins = ['https://chess-game-frontend-3ba1zvttn-akballals-projects.vercel.app'];
 
 const io = new Server(server, {
   cors: {

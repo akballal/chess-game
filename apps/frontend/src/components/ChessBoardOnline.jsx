@@ -31,7 +31,9 @@ const ChessBoardOnline = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+    console.log('Backend URL:', backendUrl);
+    console.log(import.meta.env);
     const newSocket = io(backendUrl)
     //const newSocket = io('http://localhost:3001');
     setSocket(newSocket);

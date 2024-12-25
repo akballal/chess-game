@@ -23,23 +23,27 @@ const ChessBoardOnline = () => {
   const [opponentJoined, setOpponentJoined] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [capturedPieces, setCapturedPieces] = useState([]);
+  const [resignedby, setResignedby] = useState(null);
+  const [error, setError] = useState(null);
   
 
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const gameId = urlParams.get('gameId');
+  const isJoin = urlParams.get('join');
   const navigate = useNavigate();
 
   useEffect(() => {
     const backendUrl =  import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
     //const backendUrl = 'https://chess-game-server-zb9z.onrender.com';
     console.log('Backend URL:', backendUrl);
+    console.log('join: ', isJoin)
     //console.log(import.meta.env);
     const newSocket = io(backendUrl)
     //const newSocket = io('http://localhost:3001');
     setSocket(newSocket);
 
-    newSocket.emit('joinGame', { gameId });
+    newSocket.emit('joinGame', { gameId, isJoin });
 
     newSocket.on('init', ({ board: initialBoard, color }) => {
       setBoard(initialBoard);
@@ -50,6 +54,10 @@ const ChessBoardOnline = () => {
       setOpponentJoined(true);
     });
 
+    newSocket.on('error', (error_message) => {
+      setError(error_message);
+    });
+
     newSocket.on('move', ({ from, to, promotion }) => {
       chess.move({ from, to, promotion });
       setBoard(chess.board());
@@ -58,6 +66,12 @@ const ChessBoardOnline = () => {
     newSocket.on('gameOver', ({ winner }) => {
       setWinner(winner === 'Black' ? 'Black' : 'White');
     });
+
+    newSocket.on('gameOverByResignation', ({winner}) => {
+      setResignedby(winner === 'Black' ? 'White' : 'Black')
+      setWinner(winner === 'Black' ? 'Black' : 'White')
+    })
+
 
     newSocket.on('updateBoard', (board) => {
       console.log('Board update received:', board);
@@ -182,13 +196,35 @@ const ChessBoardOnline = () => {
     setTimeout(() => setCopySuccess(false), 2000);
   };
 
+  const handleError = () => {
+    navigate('/onlinesetup');
+  }
+
   const getTransformedBoard = () =>
     playerColor === 'b'
       ? [...board].reverse().map((row) => [...row].reverse())
       : board;
 
+      if (error) {
+        return (
+          <div className="chess-board-container">
+            <div className="waiting-for-opponent">
+              <h2>Error: {error}</h2>
+              <div className="spacer"></div>
+              <div className="button-container">
+                <button onClick={handleError} className="retry-button">
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      
   return (
     <div className="chess-board-container">
+      
     {!opponentJoined ? (
     <div className="waiting-for-opponent">
       <h2>
@@ -267,10 +303,19 @@ const ChessBoardOnline = () => {
 
   )}
 
-  {winner && (
+  {(resignedby === null && winner) && (
     <div className="popup">
       <div className="popup-content">
         <h2>{winner} Wins!</h2>
+        <button onClick={handleCloseGame}>Close Game</button>
+      </div>
+    </div>
+  )}
+  {resignedby && (
+    <div className="popup">
+      <div className="popup-content">
+        <h2>{winner} Wins! </h2>
+        <h2>{resignedby} resigned the Game.</h2>
         <button onClick={handleCloseGame}>Close Game</button>
       </div>
     </div>

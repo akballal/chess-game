@@ -45,14 +45,22 @@ io.on('connection', (socket) => {
   console.log(`Player connected: ${socket.id}`);
 
   // Player joins a game
-  socket.on('joinGame', ({ gameId }) => {
+  socket.on('joinGame', ({ gameId, isJoin }) => {
     console.log(`Player ${socket.id} joined game - ${gameId}`);
-
-    if (!gameRooms[gameId]) {
+    console.log("isJoin: ", isJoin)
+    console.log("type of isJoin: ", typeof(isJoin))
+    if (isJoin === "false") {
       gameRooms[gameId] = {
         chess: new Chess(),
         players: [],
       };
+    }
+    else {
+      if (!gameRooms[gameId]) {
+        console.error(`Game room ${gameId} does not exist`);
+        socket.emit('error', 'Game room does not exist, please join a valid game room or create a new one');
+        return; // Exit early
+      }
     }
 
     const room = gameRooms[gameId];
@@ -80,50 +88,50 @@ io.on('connection', (socket) => {
     console.log(`Move received from player ${socket.id} in game ${gameId}:`, { from, to, promotion });
     const room = gameRooms[gameId];
     if (room) {
-        console.log('Current board state:', room.chess.ascii());
+      console.log('Current board state:', room.chess.ascii());
 
-        if (promotion && !['q', 'r', 'b', 'n'].includes(promotion)) {
-            console.error('Invalid promotion piece:', promotion);
-            socket.emit('error', { message: 'Invalid promotion piece' });
-            return;
+      if (promotion && !['q', 'r', 'b', 'n'].includes(promotion)) {
+        console.error('Invalid promotion piece:', promotion);
+        socket.emit('error', { message: 'Invalid promotion piece' });
+        return;
+      }
+
+      const move = room.chess.move({ from, to, promotion });
+
+      if (move) {
+        console.log('Move executed successfully:', move);
+        io.in(gameId).emit('move', { from, to, promotion: move.promotion });
+        io.in(gameId).emit('updateBoard', room.chess.board());
+
+        if (room.chess.isCheckmate()) {
+          console.log('Game over: Checkmate');
+          io.in(gameId).emit('gameOver', {
+            winner: room.chess.turn() === 'w' ? 'Black' : 'White',
+          });
         }
-
-        const move = room.chess.move({ from, to, promotion });
-
-        if (move) {
-            console.log('Move executed successfully:', move);
-            io.in(gameId).emit('move', { from, to, promotion: move.promotion });
-            io.in(gameId).emit('updateBoard', room.chess.board());
-            
-            if (room.chess.isCheckmate()) {
-                console.log('Game over: Checkmate');
-                io.in(gameId).emit('gameOver', {
-                    winner: room.chess.turn() === 'w' ? 'Black' : 'White',
-                });
-            }
-        } else {
-            console.error('Invalid move:', { from, to, promotion });
-            socket.emit('error', { message: 'Invalid move' });
-        }
+      } else {
+        console.error('Invalid move:', { from, to, promotion });
+        socket.emit('error', { message: 'Invalid move' });
+      }
     } else {
-        console.error('Game room not found:', gameId);
-        socket.emit('error', { message: 'Game room does not exist' });
+      console.error('Game room not found:', gameId);
+      socket.emit('error', { message: 'Game room does not exist' });
     }
-});
+  });
 
- // Player resigns
- socket.on('resign', ({ gameId, resignedPlayer }) => {
-  console.log(`Player ${socket.id} resigned from game ${gameId}`);
-  const room = gameRooms[gameId];
-  if (room) {
-    const winner = resignedPlayer === 'w' ? 'Black' : 'White';
-    console.log(`Game over: ${winner} wins by resignation.`);
-    io.in(gameId).emit('gameOver', { winner });
-  } else {
-    console.error('Game room not found:', gameId);
-    socket.emit('error', { message: 'Game room does not exist' });
-  }
-});
+  // Player resigns
+  socket.on('resign', ({ gameId, resignedPlayer }) => {
+    console.log(`Player ${socket.id} resigned from game ${gameId}`);
+    const room = gameRooms[gameId];
+    if (room) {
+      const winner = resignedPlayer === 'w' ? 'Black' : 'White';
+      console.log(`Game over: ${winner} wins by resignation.`);
+      io.in(gameId).emit('gameOverByResignation', { winner });
+    } else {
+      console.error('Game room not found:', gameId);
+      socket.emit('error', { message: 'Game room does not exist' });
+    }
+  });
 
   // Handle player disconnect
   socket.on('disconnect', () => {
@@ -142,14 +150,14 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('check', ({opponentColor, gameId}) => {
+  socket.on('check', ({ opponentColor, gameId }) => {
     io.in(gameId).emit('check', opponentColor);
   })
 
-  socket.on('capture', ({capturedPiece, gameId}) => {
+  socket.on('capture', ({ capturedPiece, gameId }) => {
     console.log("In backend CapturedPiece => ", capturedPiece)
     io.in(gameId).emit('capture', capturedPiece);
   })
 
-  
+
 });

@@ -6,7 +6,6 @@
   height: 100vh;
   width: 100vw; /* Reduced padding to increase usable width */
   background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-
   font-family: 'Arial', sans-serif;
   color: #333;
   box-sizing: border-box;
@@ -16,7 +15,7 @@
 /* Heading styling */
 h1 {
   margin-bottom: 15px;
-  font-size: 3rem; /* Larger font size */
+  font-size: 2.5rem; /* Larger font size */
   font-weight: bold;
   color: #333;
   text-align: center;
@@ -32,11 +31,12 @@ p {
 /* Game mode container */
 .game-mode-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  max-width: 1200px; /* Constrain max width for readability */
+  max-width: 1200px;
   gap: 40px;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
 }
 
 /* Game mode sections */
@@ -45,9 +45,10 @@ p {
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 20px;
-  width: 45%; /* Adjusted width for balanced layout */
+  width: 48%; /* Slightly reduced width for two columns */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
+  margin-bottom: 20px; /* Added margin for mobile view */
 }
 
 /* Titles in game mode */
@@ -107,12 +108,26 @@ input {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  h1 {
+    font-size: 2rem; /* Slightly smaller heading on mobile */
+  }
+
   .game-mode-container {
     flex-direction: column;
     gap: 20px;
+    align-items: center;
   }
 
   .offline-mode, .online-mode {
-    width: 100%;
+    width: 100%; /* Full width for smaller screens */
+    margin-bottom: 20px; /* Add space between sections */
+  }
+
+  .input-container div {
+    margin-bottom: 15px; /* Space between inputs on mobile */
+  }
+
+  .play-btn {
+    width: 100%; /* Full width button for mobile */
   }
 }

@@ -308,6 +308,8 @@
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
+  max-width: 300px;
+  
 }
 
 .retry-button {

@@ -1,81 +1,56 @@
-# Turborepo starter
+# Chess Game
 
-This is an official starter Turborepo.
+This is a responsive and interactive chess game application built using **Turborepo**, **React (with Vite)**, **WebSocket**, and **Node.js**. The project is organized as a monorepo to handle both the **frontend** and **backend** efficiently.
 
-## Using this example
+## Features
 
-Run the following command:
+- Play chess online with real-time multiplayer functionality using WebSocket.
+- Play chess offline against a friend on the same device.
+- Responsive and dynamic chessboard UI built with React.
+- Robust move validation and game logic.
+- Efficient development workflow using Turborepo.
+- Modular and reusable components.
 
-```sh
-npx create-turbo@latest
+## Prerequisites
+
+- **Node.js** (v16+)
+- **npm** or **yarn**
+- **Docker** (optional for containerized deployment)
+
+---
+
+## Getting Started
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/akballal/chess-game.git
+cd chess-game
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+### Install Dependencies
+```bash
+npm install
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
+### Run the Development Server
+```bash
+npm run dev
 ```
 
-### Remote Caching
+## Future Enhancements
+- Implement a chess engine for playing against AI.
+- Add user authentication and account management.
+- Record game history and allow users to replay past games.
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## Contributing
+Contributions are welcome! Please follow these steps:
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+1. Fork the repository.
+2. Clone your fork locally.
+3. Create a new branch for your feature/fix.
+4. Commit your changes with descriptive messages.
+5. Push to your fork and submit a pull request.
 
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+## Feedback
+Have ideas or suggestions? Feel free to open an issue or reach out!
